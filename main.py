@@ -61,10 +61,3 @@ def log_in(username, password):
    
 
 load_dotenv()
-
-
-
-#register("test_user", "this_is_my_password")
-#get_all_users()
-
-log_in("michael", "password")
