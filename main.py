@@ -16,6 +16,7 @@ def get_conn():
     return psycopg2.connect(conn_str)
 
 def get_all_users():
+    all_users = []
     try:
         conn = get_conn()
         cursor = conn.cursor()
@@ -23,41 +24,44 @@ def get_all_users():
         cursor.execute("SELECT * FROM users;")
         results = cursor.fetchall()
         for result in results:
-            print(f"id: {result[0]}")
-            print(f"username: {result[1]}")
-            print(f"password_hash: {result[2]}")
+            all_users.append(result)
     except(Exception, psycopg2.Error) as error:
         print("there was an error trying to access the postgresDB.\n ", error)
     finally:
         cursor.close()
         conn.close()
+        return all_users
 
-def register(username, password):
+def register_user(username, password) -> str:
+    output = ""
     try:
         conn = get_conn()
         cursor = conn.cursor()
         password_hash = hash_password(password)
         cursor.execute("INSERT INTO USERS(username, password_hash) VALUES(%s,%s)",(username, password_hash))
         conn.commit()
+        return "User registered successfully"
     except psycopg2.errors.UniqueViolation:
-        print("User already exists")
-    except(Exception, psycopg2.Error) as error:
-        print("there was an error trying to access the postgresDB.\n ", error)
+        return "User already exists"
+    except (Exception, psycopg2.Error) as error:
+        return f"Database error: {error}"
     finally:
-        cursor.close()
-        conn.close()
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
 
-def log_in(username, password):
+
+def authenticate_user(username, password) -> bool:
     conn = get_conn()
     cursor = conn.cursor()
     password_hash = hash_password(password)
     cursor.execute("SELECT password_hash from users WHERE username = %s", (username,))
     row = cursor.fetchone()
 
-    if row[0] == password_hash:
-        print("login succesful")
-    else:
-        print("login failue")
+    if row and row[0] == password_hash:
+        return True
+    return False
    
 
 load_dotenv()

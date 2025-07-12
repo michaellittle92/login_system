@@ -1,6 +1,6 @@
 # login_system
 
-start the db in detached mode: run docker-compose up -d
+start the db in detached mode: docker-compose up -d
 
 Logging: docker-compose logs db
 

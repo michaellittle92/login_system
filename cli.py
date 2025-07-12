@@ -1,4 +1,4 @@
-from main import log_in, register, get_all_users
+from main import log_in_user, register_user, get_all_users
 import sys
 
 menu_items = ["1. read all users", "2. register new user", "3. log in", "Q. quit"]
@@ -18,11 +18,11 @@ while True:
        sys.exit()
     elif user_input == "2":
         username, password = get_login_details()
-        register(username, password)
+        register_user(username, password)
         print("user registered")
     elif user_input == "3":
         username, password = get_login_details()
-        log_in(username, password)
+        log_in_user(username, password)
     else:
         print("error, please try again.")
 
